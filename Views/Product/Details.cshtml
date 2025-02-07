@@ -1,0 +1,166 @@
+﻿@model ProductViewModel
+
+<div class="product-page">
+    <div class="breadcrumb">
+        <a href="/ComputersAndLaptops">Computers & Laptops</a> &gt;
+        <a href="/NetworkComponents">Network Components</a> &gt;
+        <a href="/AirportRouters">Airport Routers</a> &gt;
+        <span>@Model.Name</span>
+    </div>
+
+    <div class="product-details">
+        <div class="product-images">
+            <div class="main-image">
+                <img id="mainProductImage" src="~/images/@Model.ImageFileNames.FirstOrDefault()" alt="@Model.Name" />
+            </div>
+            <div class="thumbnail-images">
+                @foreach (var image in Model.ImageFileNames)
+                {
+                    <img src="~/images/@image" alt="@Model.Name" class="thumbnail" onclick="changeImage(this)" />
+                }
+            </div>
+        </div>
+
+        <div class="product-info">
+            <h1>@Model.Name</h1>
+            <div class="ratings">
+                <span>★ ★ ★ ★ ★ (1 Rating)</span>
+            </div>
+            <div class="price">
+                <span>Rs. @Model.Price</span>
+            </div>
+            <div class="color-options">
+                <label>Color Family: </label>
+                <select>
+                    <option value="black">Black</option>
+                </select>
+            </div>
+
+            <div class="quantity">
+                <label>Quantity: </label>
+                <input type="number" value="1" min="1" />
+            </div>
+
+            <div class="actions">
+                <button class="buy-now">Buy Now</button>
+                <button class="add-to-cart">Add to Cart</button>
+            </div>
+        </div>
+
+        <div class="delivery-info">
+            <h3>Delivery Options</h3>
+            <div class="location">
+                <label>Bagmati, Kathmandu Metro</label>
+            </div>
+            <div class="standard-delivery">
+                <span>Standard Delivery</span> <span>Rs. 70</span>
+            </div>
+            <div class="cod">
+                <span>Cash on Delivery Available</span>
+            </div>
+            <div class="return-policy">
+                <span>14 Days Free Returns</span>
+            </div>
+            <div class="warranty">
+                <span>Warranty not available</span>
+            </div>
+        </div>
+
+        <div class="product-description">
+            <h3>Product details of @Model.Name</h3>
+            <p>@Model.Description</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // JavaScript function to change the main image when a thumbnail is clicked
+    function changeImage(element) {
+        document.getElementById("mainProductImage").src = element.src;
+    }
+</script>
+
+<style>
+    .product-page {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .breadcrumb {
+        margin: 10px 0;
+        font-size: 14px;
+        color: #666;
+    }
+
+    .product-details {
+        display: flex;
+        gap: 20px;
+    }
+
+    .product-images {
+        flex: 1;
+    }
+
+    .main-image img {
+        width: 400px;
+        height: 400px;
+        object-fit: contain;
+    }
+
+    .thumbnail-images {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .thumbnail {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        cursor: pointer;
+    }
+
+    .product-info {
+        flex: 1;
+    }
+
+        .product-info h1 {
+            font-size: 24px;
+        }
+
+    .price {
+        font-size: 24px;
+        color: #e60000;
+        margin-top: 10px;
+    }
+
+    .color-options, .quantity {
+        margin-top: 20px;
+    }
+
+    .actions {
+        margin-top: 20px;
+    }
+
+    .buy-now, .add-to-cart {
+        padding: 10px 20px;
+        margin-right: 10px;
+        background-color: #ff6600;
+        border: none;
+        color: white;
+        cursor: pointer;
+    }
+
+        .buy-now:hover, .add-to-cart:hover {
+            background-color: #e55d00;
+        }
+
+    .delivery-info {
+        margin-top: 40px;
+    }
+
+    .product-description {
+        margin-top: 40px;
+    }
+</style>

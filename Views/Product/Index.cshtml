@@ -1,0 +1,78 @@
+﻿@model IEnumerable<FoodY.ViewModel.ProductViewModel>
+
+@{
+    ViewData["Title"] = "Index-Product";
+}
+<style>
+
+</style>
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<form asp-action="Index" method="get">
+    <div class="row">
+        <div class="col-md-3">
+            <input type="text" name="Name" class="form-control" placeholder="Search by name" />
+        </div>
+        <div class="col-md-3">
+            <select name="CategoryId" class="form-control">
+                <option value="">All Categories</option>
+                @foreach (var category in ViewBag.Categories)
+                {
+                    <option value="@category.Id">@category.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input type="number" name="MinPrice" class="form-control" placeholder="Min Price" step="0.01" />
+        </div>
+        <div class="col-md-2">
+            <input type="number" name="MaxPrice" class="form-control" placeholder="Max Price" step="0.01" />
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </div>
+</form>
+
+
+<table class="table">
+    <thead>
+
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th>Images</th>
+        </tr>
+
+
+    </thead>
+    <tbody>
+        @foreach (var item in Model)//@model
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Price.ToString("C")</td>
+                <td>@item.Description</td>
+                <td>@item.CategoryName</td>
+                <td>
+                    @foreach (var fileName in item.ImageFileNames)
+                    {
+                        <img src="~/images/@fileName" alt="@item.Name" style="width: 50px; height: 50px;" />
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    <a asp-action="DeleteP" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>

@@ -1,0 +1,70 @@
+﻿@model IEnumerable<FoodY.ViewModel.ProductViewModel>
+@{
+    ViewData["Title"] = "FoodY Main Page";
+}
+<section id="hero">
+    <h1>Discover Culinary Delights</h1>
+    <p>Explore a world of flavors at your fingertips</p>
+    <div class="search-bar">
+        <input type="text" placeholder="Search for dishes or cuisines...">
+        <button><i class="fas fa-search"></i></button>
+    </div>
+</section>
+
+
+
+<section id="reviews">
+    <h2>Customer Reviews</h2>
+    <div class="review-slider">
+        <div class="review">
+            <img src="/images/user1.jpg" alt="User 1">
+            <h4>John Doe</h4>
+            <p>"The food was absolutely delicious! Quick delivery and great service."</p>
+            <div class="rating">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+            </div>
+        </div>
+        <div class="review">
+            <img src="/images/user2.jpg" alt="User 2">
+            <h4>Jane Smith</h4>
+            <p>"I love the variety of cuisines available. FoodY is my go-to for all cravings!"</p>
+            <div class="rating">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="food-list">
+    <h2>Our Menu</h2>
+    <div class="food-grid">
+        @foreach (var item in Model)
+        {
+            <div class="food-item" style="background-image: url('@(item.ImageFileNames.Any() ? $"/images/{item.ImageFileNames.First()}" : "/images/placeholder_image.jpg")')">
+                <div class="food-item-overlay">
+                    <h3>@item.Name</h3>
+                    <p class="description">@item.Description</p>
+                    <p class="price">$@item.Price</p>
+                    <p class="category">@item.CategoryName</p>
+                    <div class="button-group">
+                        <button class="btn-order add-to-cart"
+                                data-id="@item.Id"
+                                data-name="@item.Name"
+                                data-price="@item.Price">
+                            Add to Cart
+                        </button>
+                        @* <a class="btn-details" asp-area="" asp-controller="Product" asp-route-id="@item.Id" asp-action="Details">Details</a> *@
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>

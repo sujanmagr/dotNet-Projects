@@ -1,0 +1,218 @@
+﻿<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 600px;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+    }
+
+    .actions {
+        display: flex;
+        align-items: center;
+    }
+
+        .actions input {
+            width: 50px;
+            margin-right: 10px;
+        }
+</style>
+
+
+<div id="cartModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Your Cart</h2>
+        <div id="cartContents">
+            <div class="cart-container" id="cartContainer">
+                <!-- Cart items will be dynamically loaded here -->
+
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+            $(document).ready(function () {
+                var modal = document.getElementById("cartModal");
+                var btn = document.getElementById("openCartModal");
+                var span = document.getElementsByClassName("close")[0];
+                var userId = '@(SignInManager.IsSignedIn(User) ? UserManager.GetUserId(User) : "guest")';
+                console.log(userId);
+
+                loadCart();
+
+               function loadCart() {
+            console.log("Loading cart...");
+            $.ajax({
+                url: '/api/cart/GetCart1',
+                method: 'GET',
+                success: function (data) {
+                    $('#cartContainer').html(''); // Clear current cart
+                    let total = 0;
+                    data.cartDetails.forEach(item => {
+                        total += item.price * item.quantity; // Calculate total price
+                        $('#cartContainer').append(`
+                            <div class="cart-item" data-id="${item.id}">
+                                <div>
+                                    <h4>${item.product.name}</h4>
+                                    <p>Price: $${item.price}</p>
+                                    <p>Quantity: ${item.quantity}</p>
+                                </div>
+                                <div class="actions">
+                                    <input type="number" value="${item.quantity}" min="1" onchange="updateQuantity(${item.id}, this.value)">
+                                    <button onclick="removeFromCart(${item.id})">Remove</button>
+                                </div>
+                            </div>
+                        `);
+                    });
+
+                    // Add the checkout button and total
+                    $('#cartContainer').append(`
+                        <div class="cart-total">
+                            <h4>Total: $${total}</h4>
+                            <button id="checkoutBtn" class="btn-checkout">Checkout</button>
+                        </div>
+                    `);
+
+                    // Bind the checkout button click event
+                    $('#checkoutBtn').click(function () {
+                        // Redirect to login if user is not logged in
+                        if (userId === "guest") {
+                            window.location.href = "Identity/Account/Login"; // Redirect to login page
+                        } else {
+                            // Redirect to checkout page if user is logged in
+                            window.location.href = "Home/Checkout";
+                        }
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error loading cart: " + error);
+                }
+            });
+        }
+
+                // // Fetch the cart for a given user
+                // function loadCart2(userId) {
+                //     $.ajax({
+                //         url: '/api/cart/GetCart',
+                //         method: 'GET',
+                //         data: { userId: userId }, // Pass userId in data object
+                //         success: function (data) {
+                //             $('#cartContainer').html(''); // Clear current cart
+                //             data.cartDetails.forEach(item => {
+                //                 $('#cartContainer').append(`
+                //                     <div class="cart-item" data-id="${item.id}">
+                //                         <div>
+                //                             <h4>${item.product.name}</h4>
+                //                             <p>Price: $${item.price}</p>
+                //                         </div>
+                //                         <div class="actions">
+                //                             <input type="number" value="${item.quantity}" min="1" onchange="updateQuantity(${item.id}, this.value)">
+                //                             <button onclick="removeFromCart(${item.id})">Remove</button>
+                //                         </div>
+                //                     </div>
+                //                 `);
+                //             });
+                //         },
+                //         error: function (xhr, status, error) {
+                //             console.log("Error: " + error);
+                //         }
+                //     });
+                // }
+
+                // Add item to cart
+                $(".add-to-cart").click(function () {
+                    let productId = $(this).data("id"); // Get the product ID from the button
+                    let quantity = 1; // Default quantity
+                    let uId = userId;
+                    AddItemToCart(productId, quantity, uId);
+                });
+
+                function AddItemToCart(productId, quantity, userId) {
+                    $.ajax({
+                        url: `/api/cart/AddItemInCart`,
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            UserId: userId,       // Pass the userId
+                            ProductId: productId, // The product to add
+                            Quantity: quantity    // The quantity to add
+                        }),
+                                 success: function (data) {
+                            console.log("Item added successfully"); // For debugging
+                            loadCart(); // Reload the cart upon success
+                            alert("Item added to cart successfully");
+                        },
+                        error: function (xhr, status, error) {
+                            console.log("Error: " + error);
+                        }
+                    });
+                }
+
+                // Modal show and hide functions
+                btn.onclick = function () {
+                    modal.style.display = "block";
+                };
+
+                span.onclick = function () {
+                    modal.style.display = "none";
+                };
+
+                window.onclick = function (event) {
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                    }
+                };
+
+                // Update cart item quantity
+                function updateQuantity(itemId, newQuantity) {
+                    console.log(`Updating quantity for item ${itemId} to ${newQuantity}`);
+                }
+
+                // Remove item from cart
+                function removeFromCart(itemId) {
+                    console.log(`Removing item ${itemId} from cart`);
+                    $(`.cart-item[data-id="${itemId}"]`).remove();
+                }
+            });
+    </script>
+
+
+

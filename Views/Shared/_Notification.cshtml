@@ -1,0 +1,16 @@
+﻿@if (TempData["SuccessMessage"] != null)
+{
+    <script>
+        toastr.success('@TempData["SuccessMessage"]');
+    </script>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <script>
+        toastr.error('@TempData["ErrorMessage"]');
+    </script>
+}
+
+<div id="response" style="color:red;"></div>  <!-- Display error or success messages here -->
+<div id="alertContainer" style="position: fixed; top: 20px; right: 20px; z-index: 1000;"></div>
